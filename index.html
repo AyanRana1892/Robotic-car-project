@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARENA · CAR SELECTION</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #080a0d;
+      --surface: #0d1117;
+      --surface2:#111820;
+      --border:  rgba(255,255,255,0.07);
+      --border2: rgba(255,255,255,0.13);
+      --text:    #e8edf2;
+      --muted:   #4a5568;
+      --red:     #ff3b5c;
+      --red2:    #ff7096;
+      --blue:    #3b8fff;
+      --blue2:   #7096ff;
+      --safe:    #00e89a;
+      --font-head: 'Syne', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+    }
+
+    /* ── Grid overlay ── */
+    body::after {
+      content: ''; position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+
+    /* ── Ambient glows ── */
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 50% 60% at 20% 50%, rgba(255,59,92,0.07), transparent),
+        radial-gradient(ellipse 50% 60% at 80% 50%, rgba(59,143,255,0.07), transparent),
+        radial-gradient(ellipse 40% 40% at 50% 50%, rgba(10,20,40,0.6), transparent);
+      pointer-events: none;
+    }
+
+    /* ── Shell ── */
+    .shell {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 32px;
+      padding: 32px 24px;
+      width: 100%; max-width: 480px;
+      animation: fadeUp 0.6s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      text-align: center;
+    }
+    .header-badge {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 20px; padding: 5px 14px;
+      font-size: 9px; letter-spacing: 0.3em;
+      color: var(--muted); text-transform: uppercase;
+    }
+    .header-badge-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--safe);
+      box-shadow: 0 0 6px var(--safe);
+      animation: pulse 2s infinite;
+    }
+    .header-title {
+      font-family: var(--font-head);
+      font-size: clamp(36px, 10vw, 52px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--red) 0%, #fff 45%, var(--blue) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header-sub {
+      font-size: 10px; letter-spacing: 0.25em;
+      color: var(--muted); text-transform: uppercase;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border2), transparent);
+    }
+
+    /* ── Car cards ── */
+    .cars { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+
+    .car-link {
+      text-decoration: none;
+      display: flex; align-items: center; gap: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      padding: 20px 22px;
+      position: relative; overflow: hidden;
+      transition: transform 0.18s cubic-bezier(.34,1.56,.64,1),
+                  border-color 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      animation: fadeUp 0.6s cubic-bezier(.22,1,.36,1) both;
+    }
+    .car-link:nth-child(1) { animation-delay: 0.12s; }
+    .car-link:nth-child(2) { animation-delay: 0.22s; }
+
+    /* Shimmer on hover */
+    .car-link::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.06), transparent 60%);
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .car-link:hover::before { opacity: 1; }
+
+    /* Accent stripe */
+    .car-link::after {
+      content: ''; position: absolute;
+      left: 0; top: 0; bottom: 0; width: 3px;
+      border-radius: 3px 0 0 3px;
+      transition: opacity 0.2s;
+    }
+    .car-link.red::after  { background: var(--red);  box-shadow: 0 0 12px var(--red); }
+    .car-link.blue::after { background: var(--blue); box-shadow: 0 0 12px var(--blue); }
+
+    .car-link.red:hover  { border-color: var(--red);  box-shadow: 0 0 28px rgba(255,59,92,0.2);  transform: translateY(-3px) scale(1.01); }
+    .car-link.blue:hover { border-color: var(--blue); box-shadow: 0 0 28px rgba(59,143,255,0.2); transform: translateY(-3px) scale(1.01); }
+
+    /* Badge icon */
+    .car-icon {
+      width: 52px; height: 52px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .car-icon svg { width: 26px; height: 26px; fill: #000; }
+    .car-link.red  .car-icon { background: var(--red);  box-shadow: 0 0 20px rgba(255,59,92,0.45); }
+    .car-link.blue .car-icon { background: var(--blue); box-shadow: 0 0 20px rgba(59,143,255,0.45); }
+
+    /* Text */
+    .car-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .car-name {
+      font-family: var(--font-head);
+      font-size: 22px; font-weight: 800;
+      letter-spacing: -0.02em; line-height: 1;
+    }
+    .car-link.red  .car-name { color: var(--red); }
+    .car-link.blue .car-name { color: var(--blue); }
+    .car-label {
+      font-size: 9px; letter-spacing: 0.22em;
+      color: var(--muted); text-transform: uppercase;
+    }
+
+    /* Arrow */
+    .car-arrow {
+      font-size: 18px; color: var(--muted);
+      transition: transform 0.2s, color 0.2s;
+      flex-shrink: 0;
+    }
+    .car-link.red:hover  .car-arrow { color: var(--red);  transform: translateX(4px); }
+    .car-link.blue:hover .car-arrow { color: var(--blue); transform: translateX(4px); }
+
+    /* ── Status bar ── */
+    .status-bar {
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+      font-size: 9px; letter-spacing: 0.18em;
+      color: var(--muted); text-transform: uppercase;
+      animation: fadeUp 0.6s 0.35s cubic-bezier(.22,1,.36,1) both;
+    }
+    .status-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+    }
+    .status-dot.red  { background: var(--red);  box-shadow: 0 0 5px var(--red); }
+    .status-dot.blue { background: var(--blue); box-shadow: 0 0 5px var(--blue); }
+    .status-sep { color: var(--border2); }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-badge">
+      <div class="header-badge-dot"></div>
+      Arena System · Online
+    </div>
+    <div class="header-title">ARENA</div>
+    <div class="header-sub">Select your car to begin</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Car selection -->
+  <div class="cars">
+
+    <a class="car-link red" href="Car01.html">
+      <div class="car-icon">
+        <svg viewBox="0 0 24 24"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h2l2-4h10l2 4h2a2 2 0 012 2v6a2 2 0 01-2 2h-2m-7 0a2 2 0 100-4 2 2 0 000 4zm-5 0a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z"/></svg>
+      </div>
+      <div class="car-info">
+        <div class="car-name">CAR 01</div>
+        <div class="car-label">Arena Control · RED</div>
+      </div>
+      <div class="car-arrow">→</div>
+    </a>
+
+    <a class="car-link blue" href="Car02.html">
+      <div class="car-icon">
+        <svg viewBox="0 0 24 24"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h2l2-4h10l2 4h2a2 2 0 012 2v6a2 2 0 01-2 2h-2m-7 0a2 2 0 100-4 2 2 0 000 4zm-5 0a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z"/></svg>
+      </div>
+      <div class="car-info">
+        <div class="car-name">CAR 02</div>
+        <div class="car-label">Arena Control · BLUE</div>
+      </div>
+      <div class="car-arrow">→</div>
+    </a>
+
+  </div>
+
+  <!-- Status -->
+  <div class="status-bar">
+    <div class="status-dot red"></div>
+    <span>Car 01 · Red</span>
+    <span class="status-sep">·</span>
+    <div class="status-dot blue"></div>
+    <span>Car 02 · Blue</span>
+  </div>
+
+</div>
+
+<script>
+  // Mouse-tracking shimmer on each card
+  document.querySelectorAll('.car-link').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+      card.style.setProperty('--my', ((e.clientY - r.top)  / r.height * 100) + '%');
+    });
+  });
+</script>
+</body>
+</html>
