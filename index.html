@@ -817,8 +817,10 @@ function parseLine(line) {
     updateBattery(1, parseInt(line.slice(5)));
   } else if (line.startsWith('BATT2:')) {
     updateBattery(2, parseInt(line.slice(6)));
-  } else if (line.startsWith('D:')) {
-    updateProximity(parseInt(line.slice(2)));
+  } else if (line.startsWith('DF:')) {
+    updateProximity('front', parseInt(line.slice(3)));
+  } else if (line.startsWith('DR:')) {
+    updateProximity('rear', parseInt(line.slice(3)));
   } else if (line.startsWith('WARN:')) {
     showCrashMsg(line.slice(5));
     document.querySelector('.shell').classList.add('shake');
@@ -1256,14 +1258,25 @@ function setTelem(id, val, cls) {
   const el=document.getElementById(id); el.textContent=val;
   el.className='telem-val'+(cls?' '+cls:'');
 }
-function updateProximity(cm) {
-  const safe=cm>999?100:Math.min(100,(cm/100)*100);
-  document.getElementById('prox-fill').style.width=safe+'%';
-  document.getElementById('prox-fill').style.background=cm<=10?'var(--danger)':cm<=20?'var(--warn)':'var(--safe)';
-  document.getElementById('prox-cm').textContent=cm>999?'∞ cm':cm+' cm';
-  const tv=document.getElementById('tv-dist');
-  tv.textContent=cm>999?'∞':cm+'cm';
-  tv.className='telem-val'+(cm<=10?' danger':cm<=20?' warn':'');
+function updateProximity(side, cm) {
+  // Only update the prox bar with the front sensor
+  if (side === 'front') {
+    const safe=cm>999?100:Math.min(100,(cm/100)*100);
+    document.getElementById('prox-fill').style.width=safe+'%';
+    document.getElementById('prox-fill').style.background=cm<=10?'var(--danger)':cm<=20?'var(--warn)':'var(--safe)';
+    document.getElementById('prox-cm').textContent=cm>999?'∞ cm':cm+' cm';
+    const tv=document.getElementById('tv-dist');
+    tv.textContent=cm>999?'∞':cm+'cm';
+    tv.className='telem-val'+(cm<=10?' danger':cm<=20?' warn':'');
+  }
+  // Rear distance shown in crash log during fight mode
+  if (side === 'rear' && fightActive) {
+    const rearEl = document.getElementById('crash-msg');
+    if (cm <= 20) {
+      rearEl.textContent = '⚠ Enemy ' + (cm > 999 ? '∞' : cm) + 'cm behind you!';
+      rearEl.className = 'crash-msg';
+    }
+  }
 }
 const crashEmojis=['😱','🫠','💀','🚨','😤','🤯','🫣'];
 function showCrashMsg(msg) {
