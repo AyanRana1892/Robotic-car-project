@@ -167,10 +167,10 @@
     .dpad-btn:active svg, .dpad-btn.active svg { stroke: var(--accent); }
     .dpad-btn span { font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); transition: color 0.1s; position: relative; z-index: 1; }
     .dpad-btn:active span, .dpad-btn.active span { color: var(--accent); }
-    .dpad-btn.stop-btn { border-color: rgba(59,143,255,0.2); }
+    .dpad-btn.stop-btn { border-color: rgba(255,59,92,0.2); }
     .dpad-btn.stop-btn svg { stroke: var(--danger); }
     .dpad-btn.stop-btn span { color: var(--danger); opacity: 0.7; }
-    .dpad-btn.stop-btn:active, .dpad-btn.stop-btn.stop-flash { border-color: var(--danger); box-shadow: 0 0 20px rgba(59,143,255,0.4); transform: scale(0.93); }
+    .dpad-btn.stop-btn:active, .dpad-btn.stop-btn.stop-flash { border-color: var(--danger); box-shadow: 0 0 20px rgba(255,59,92,0.4); transform: scale(0.93); }
     #fwd   { grid-column:2; grid-row:1; }
     #left  { grid-column:1; grid-row:2; }
     #stop  { grid-column:2; grid-row:2; }
@@ -263,17 +263,54 @@
     .joy-deadzone-note span { color: var(--accent); }
 
     /* ── Auto panel ── */
-    .auto-card { width: 100%; max-width: 340px; background: var(--surface); border: 1px solid var(--border2); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
-    .auto-orb { width: 80px; height: 80px; border-radius: 50%; background: conic-gradient(var(--safe), var(--accent), var(--safe)); display: flex; align-items: center; justify-content: center; animation: spin 4s linear infinite; box-shadow: 0 0 30px rgba(0,232,154,0.3); }
-    .auto-orb.off { background: var(--surface2); animation: none; box-shadow: none; }
-    .auto-orb svg { width: 34px; height: 34px; stroke: #000; fill: none; stroke-width: 2; stroke-linecap: round; }
-    .auto-orb.off svg { stroke: var(--muted); }
+    .auto-card { width: 100%; max-width: 340px; background: var(--surface); border: 1px solid var(--border2); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+
+    /* Orb — idle / avoid (green) / line (amber) */
+    .auto-orb { width: 72px; height: 72px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; transition: box-shadow 0.3s, background 0.3s; }
+    .auto-orb svg { width: 32px; height: 32px; stroke: var(--muted); fill: none; stroke-width: 2; stroke-linecap: round; transition: stroke 0.3s; }
+    .auto-orb.avoid { background: conic-gradient(var(--safe), var(--accent), var(--safe)); animation: spin 4s linear infinite; box-shadow: 0 0 28px rgba(0,232,154,0.4); }
+    .auto-orb.avoid svg { stroke: #000; }
+    .auto-orb.line  { background: conic-gradient(var(--warn), #ff8c00, var(--warn)); animation: spin 3s linear infinite; box-shadow: 0 0 28px rgba(255,190,11,0.4); }
+    .auto-orb.line  svg { stroke: #000; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .auto-title { font-family: var(--font-head); font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
-    .auto-desc { font-size: 11px; color: var(--muted); line-height: 1.6; }
-    .auto-toggle { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid var(--safe); background: transparent; color: var(--safe); font-family: var(--font-head); font-size: 14px; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s; }
-    .auto-toggle:hover { background: rgba(0,232,154,0.08); }
-    .auto-toggle.on { background: var(--safe); color: #000; box-shadow: 0 0 20px rgba(0,232,154,0.3); }
+
+    .auto-title { font-family: var(--font-head); font-size: 20px; font-weight: 800; letter-spacing: -0.01em; transition: color 0.3s; }
+    .auto-title.avoid { color: var(--safe); }
+    .auto-title.line  { color: var(--warn); }
+    .auto-desc { font-size: 10px; color: var(--muted); line-height: 1.6; min-height: 32px; transition: all 0.2s; }
+
+    /* Scan progress bar */
+    .auto-scan-bar { width: 100%; height: 3px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+    .auto-scan-fill { height: 100%; width: 0%; border-radius: 2px; transition: background 0.3s; }
+    .auto-scan-fill.avoid { background: var(--safe); }
+    .auto-scan-fill.line  { background: var(--warn); }
+
+    /* Two mode buttons side by side */
+    .auto-mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
+    .mode-btn {
+      padding: 12px 8px; border-radius: 10px; border: 1px solid var(--border2);
+      background: var(--surface2); color: var(--muted);
+      font-family: var(--font-head); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+    }
+    .mode-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .mode-btn:hover { border-color: var(--text); color: var(--text); }
+    .mode-btn.avoid-btn:hover { border-color: var(--safe); color: var(--safe); }
+    .mode-btn.line-btn:hover  { border-color: var(--warn); color: var(--warn); }
+    .mode-btn.avoid-btn.on { border-color: var(--safe); background: var(--safe); color: #000; box-shadow: 0 0 18px rgba(0,232,154,0.35); }
+    .mode-btn.line-btn.on  { border-color: var(--warn); background: var(--warn); color: #000; box-shadow: 0 0 18px rgba(255,190,11,0.35); }
+    .mode-btn.avoid-btn.on svg, .mode-btn.line-btn.on svg { stroke: #000; }
+
+    /* Stop-all button */
+    .auto-stop-btn {
+      width: 100%; padding: 10px; border-radius: 9px;
+      border: 1px solid rgba(255,59,92,0.3); background: transparent;
+      color: var(--muted); font-family: var(--font-head); font-size: 12px;
+      font-weight: 700; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s;
+    }
+    .auto-stop-btn:hover { border-color: var(--danger); color: var(--danger); background: rgba(255,59,92,0.07); }
+    .auto-stop-btn.active { border-color: var(--danger); color: var(--danger); }
 
     /* ── Dance panel ── */
     .dance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
@@ -290,7 +327,7 @@
     .dance-status-text { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
     .dance-status-text span { color: var(--accent); }
     .abort-btn { padding: 5px 12px; border-radius: 6px; border: 1px solid var(--danger); background: transparent; color: var(--danger); font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em; cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
-    .abort-btn:hover { background: rgba(59,143,255,0.1); }
+    .abort-btn:hover { background: rgba(255,59,92,0.1); }
     .peer-required { font-size: 10px; color: var(--muted); text-align: center; letter-spacing: 0.08em; padding: 8px; border: 1px dashed var(--border2); border-radius: 8px; }
     .peer-required span { color: var(--warn); }
 
@@ -596,7 +633,7 @@
         <div class="batt-pct offline" id="batt-pct-2">—</div>
       </div>
       <div class="batt-track"><div class="batt-fill offline" id="batt-fill-2" style="width:0%"></div></div>
-      <div class="batt-conn-label offline" id="batt-conn-2">Peer offline</div>
+      <div class="batt-conn-label offline" id="batt-conn-2">Peer (Car 01) offline</div>
     </div>
   </div>
 
@@ -702,13 +739,33 @@
     <!-- ══ AUTO PANEL ══ -->
     <div class="panel" id="panel-auto">
       <div class="auto-card">
-        <div class="auto-orb off" id="auto-orb">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+
+        <!-- Animated orb -->
+        <div class="auto-orb" id="auto-orb">
+          <svg id="auto-orb-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
         </div>
-        <div class="auto-title" id="auto-title">Auto-Explore</div>
-        <div class="auto-desc">The car drives itself, navigates obstacles autonomously, and will never crash. Sit back and watch it roam.</div>
-        <div class="dance-progress"><div class="dance-progress-fill" id="auto-scan" style="width:0%"></div></div>
-        <button class="auto-toggle" id="auto-btn" onclick="toggleAuto()">ENGAGE AUTO MODE</button>
+
+        <div class="auto-title" id="auto-title">Smart Drive</div>
+        <div class="auto-desc" id="auto-desc">Choose a mode. The car takes over — obstacle avoid uses ultrasonic sensors, line follow uses IR sensors.</div>
+
+        <!-- Scan progress bar -->
+        <div class="auto-scan-bar"><div class="auto-scan-fill" id="auto-scan"></div></div>
+
+        <!-- Two mode buttons -->
+        <div class="auto-mode-row">
+          <button class="mode-btn avoid-btn" id="avoid-btn" onclick="activateMode('avoid')">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            OBSTACLE<br>AVOID
+          </button>
+          <button class="mode-btn line-btn" id="line-btn" onclick="activateMode('line')">
+            <svg viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M3 6l4 6-4 6"/><path d="M21 6l-4 6 4 6"/></svg>
+            IR LINE<br>FOLLOW
+          </button>
+        </div>
+
+        <!-- Stop all -->
+        <button class="auto-stop-btn" id="auto-stop-btn" onclick="activateMode(null)">■ &nbsp;STOP ALL MODES</button>
+
       </div>
     </div>
 
@@ -762,7 +819,7 @@ const SERVER_URL = 'wss://arena-server-ehqp.onrender.com';
 const BT_SERVICE = '0000ffe0-0000-1000-8000-00805f9b34fb';
 const BT_CHAR    = '0000ffe1-0000-1000-8000-00805f9b34fb';
 let btDevice = null, btChar = null, btConnected = false;
-let pkts = 0, autoOn = false, danceActive = false;
+let pkts = 0, danceActive = false;
 const enc = new TextEncoder(), dec = new TextDecoder();
 
 async function toggleBT() {
@@ -779,7 +836,7 @@ async function toggleBT() {
     btChar.addEventListener('characteristicvaluechanged', onBTData);
     setBTStatus(true, btDevice.name || 'HC-Module');
     // Update Car 1 battery LED
-    updateBattLed(2, true);
+    updateBattLed(1, true);
   } catch(e) {
     if (e.name !== 'NotFoundError') alert('BT Error: ' + e.message);
     document.getElementById('bt-label').textContent = 'Connect BT';
@@ -791,14 +848,14 @@ function setBTStatus(on, name) {
   const p = document.getElementById('bt-pill');
   p.classList.toggle('connected', on);
   document.getElementById('bt-label').textContent = on ? name : 'Connect BT';
-  updateBattLed(2, on);
+  updateBattLed(1, on);
 }
 
 function onBTDisconnect() {
   btChar = null; btConnected = false;
   setBTStatus(false);
   setTelem('tv-state','DISC','');
-  updateBattLed(2, false);
+  updateBattLed(1, false);
 }
 
 let btBuf = '';
@@ -814,9 +871,9 @@ function onBTData(e) {
 function parseLine(line) {
   // Battery: "BATT:85" for this car, "BATT2:72" for peer
   if (line.startsWith('BATT:')) {
-    updateBattery(2, parseInt(line.slice(5)));
+    updateBattery(1, parseInt(line.slice(5)));
   } else if (line.startsWith('BATT2:')) {
-    updateBattery(1, parseInt(line.slice(6)));
+    updateBattery(2, parseInt(line.slice(6)));
   } else if (line.startsWith('DF:')) {
     updateProximity('front', parseInt(line.slice(3)));
   } else if (line.startsWith('DR:')) {
@@ -828,8 +885,10 @@ function parseLine(line) {
   } else if (line === 'DODGE') {
     setTelem('tv-state','DODGE!','danger');
     setTimeout(() => setTelem('tv-state','IDLE',''), 1200);
-  } else if (line === 'AUTO_ON')  { setTelem('tv-mode','AUTO','active'); }
-  else if (line === 'MANUAL_ON')  { setTelem('tv-mode','MANUAL',''); }
+  } else if (line === 'AUTO_ON')  { if (activeMode !== 'avoid') activateMode('avoid'); }
+  else if (line === 'MANUAL_ON')  { if (activeMode !== null)    activateMode(null); }
+  else if (line === 'IR_ON')    { if (activeMode !== 'line')  activateMode('line'); }
+  else if (line === 'IR_OFF')   { if (activeMode !== null)    activateMode(null); }
   else if (line === 'READY')      { setTelem('tv-state','READY','safe'); setTimeout(()=>setTelem('tv-state','IDLE',''),2000); }
   // IR hit: Arduino sends "HIT:car1:front" or "HIT:car1:rear"
   else if (line.startsWith('HIT:')) {
@@ -844,7 +903,7 @@ function parseLine(line) {
 
 async function sendBT(cmd) {
   if (!btChar) return;
-  try { await btChar.writeValue(enc.encode(cmd)); pkts++; document.getElementById('tv-pkts').textContent = pkts; }
+  try { await btChar.writeValue(enc.encode(cmd + '\n')); pkts++; document.getElementById('tv-pkts').textContent = pkts; }
   catch(e) { console.warn('BT err', e); }
 }
 
@@ -881,7 +940,7 @@ function updateBattLed(carNum, online) {
     fillEl.className = 'batt-fill offline';
     fillEl.style.width = '0%';
     connEl.className = 'batt-conn-label offline';
-    connEl.textContent = carNum === 2 ? 'Not connected' : 'Peer offline';
+    connEl.textContent = carNum === 1 ? 'Not connected' : 'Peer offline';
   } else {
     ledEl.className = 'batt-led online';
     connEl.className = 'batt-conn-label online';
@@ -901,9 +960,9 @@ function connectWS() {
       const m = JSON.parse(e.data);
       if (m.type === 'peer_status' && m.role === PEER_ROLE) {
         setPeerStatus(m.online);
-        if (!m.online) updateBattLed(1, false);
+        if (!m.online) updateBattLed(2, false);
       }
-      else if (m.type === 'peer_battery') { updateBattery(1, m.pct); }
+      else if (m.type === 'peer_battery') { updateBattery(2, m.pct); }
       else if (m.type === 'dance_start')  { receiveDance(m.routine, m.t); }
       else if (m.type === 'dance_abort')  { abortDance(true); }
       else if (m.type === 'fight_start')  { enterFightMode(); }
@@ -933,7 +992,7 @@ function setPeerStatus(on) {
   document.getElementById('peer-label').textContent = on ? 'Peer online' : 'Peer offline';
   const r = document.getElementById('peer-required');
   if (r) r.style.display = on ? 'none' : 'block';
-  updateBattLed(1, on);
+  updateBattLed(2, on);
 }
 
 // ════════════════════════════════════════
@@ -960,7 +1019,7 @@ const heldKeys = new Set();
 const cmdLabels = { F:'FWD', B:'REV', L:'LEFT', R:'RIGHT', S:'STOP' };
 
 function pressDir(el, cmd) {
-  if (autoOn || danceActive || joystickMode) return;
+  if (activeMode || danceActive || joystickMode) return;
   if (activeBtn === el) return;
   releaseDir();
   activeBtn = el; el.classList.add('active');
@@ -1071,7 +1130,7 @@ function joyReleaseRight() {
 // ── Combined command resolver ──
 let lastThrottleCmd = 'S', lastSteerCmd = 'S';
 function resolveJoyCmd() {
-  if (autoOn || danceActive) return;
+  if (activeMode || danceActive) return;
 
   // Throttle
   const ay = Math.abs(joyLeftNy);
@@ -1106,7 +1165,7 @@ function isInside(el, clientX, clientY) {
 }
 
 joyBaseLeft.addEventListener('touchstart', e => {
-  if (!joystickMode || autoOn || danceActive) return;
+  if (!joystickMode || activeMode || danceActive) return;
   e.preventDefault();
   for (const t of e.changedTouches) {
     touchJoyMap[t.identifier] = 'left';
@@ -1119,7 +1178,7 @@ joyBaseLeft.addEventListener('touchstart', e => {
 }, { passive: false });
 
 joyBaseRight.addEventListener('touchstart', e => {
-  if (!joystickMode || autoOn || danceActive) return;
+  if (!joystickMode || activeMode || danceActive) return;
   e.preventDefault();
   for (const t of e.changedTouches) {
     touchJoyMap[t.identifier] = 'right';
@@ -1161,7 +1220,7 @@ window.addEventListener('touchcancel', e => {
 // Mouse (desktop) — one at a time
 let mouseJoySide = null;
 joyBaseLeft.addEventListener('mousedown', e => {
-  if (!joystickMode || autoOn || danceActive) return;
+  if (!joystickMode || activeMode || danceActive) return;
   e.preventDefault();
   mouseJoySide = 'left';
   joyLeftActive = true;
@@ -1171,7 +1230,7 @@ joyBaseLeft.addEventListener('mousedown', e => {
   joyMoveLeft(e.clientX, e.clientY);
 });
 joyBaseRight.addEventListener('mousedown', e => {
-  if (!joystickMode || autoOn || danceActive) return;
+  if (!joystickMode || activeMode || danceActive) return;
   e.preventDefault();
   mouseJoySide = 'right';
   joyRightActive = true;
@@ -1229,23 +1288,102 @@ function endDance() { danceActive=false; currentRoutine=null; document.getElemen
 function abortDance(fromPeer=false) { if(!fromPeer) wsSend({type:'dance_abort'}); clearTimeout(danceTimer); sendBT('S'); endDance(); }
 
 // ════════════════════════════════════════
-//  AUTO MODE
+//  SMART DRIVE — OBSTACLE AVOID + IR LINE FOLLOW
 // ════════════════════════════════════════
-function toggleAuto() {
-  autoOn = !autoOn;
-  sendBT(autoOn ? 'A' : 'M');
-  document.getElementById('auto-orb').classList.toggle('off', !autoOn);
-  document.getElementById('auto-btn').classList.toggle('on', autoOn);
-  document.getElementById('auto-btn').textContent = autoOn ? 'DISENGAGE AUTO MODE' : 'ENGAGE AUTO MODE';
-  document.getElementById('auto-title').textContent = autoOn ? 'Exploring…' : 'Auto-Explore';
-  setTelem('tv-mode', autoOn?'AUTO':'MANUAL', autoOn?'active':'');
-  const scan = document.getElementById('auto-scan');
-  if (autoOn) {
-    scan.style.transition='width 2s linear';
-    const loop=()=>{ if(!autoOn){scan.style.width='0%';return;} scan.style.width='100%'; setTimeout(()=>{scan.style.width='0%';setTimeout(loop,200);},2000); };
-    loop();
+let activeMode = null; // null | 'avoid' | 'line'
+let autoOn = false;    // kept for fight-mode compat check
+let irLineOn = false;  // kept for parseLine compat
+
+let scanLoopId = null;
+
+const MODE_CFG = {
+  avoid: {
+    cmd:   'A',
+    orb:   'avoid',
+    title: 'Avoiding…',
+    desc:  'Ultrasonic sensors active. Car will steer around obstacles automatically.',
+    scan:  'avoid',
+    telem: ['AUTO','active'],
+  },
+  line: {
+    cmd:   'I',
+    orb:   'line',
+    title: 'Line Following…',
+    desc:  'IR sensors active. Keep the car over the line and it will follow it.',
+    scan:  'line',
+    telem: ['IR LINE','warn'],
+  },
+};
+
+function activateMode(mode) {
+  // Stop any previous scan animation
+  clearTimeout(scanLoopId);
+
+  // If toggling the same mode off, treat as null
+  if (mode === activeMode) mode = null;
+
+  activeMode = mode;
+  autoOn    = (mode === 'avoid');
+  irLineOn  = (mode === 'line');
+
+  // Stop manual controls
+  releaseDir();
+  joyReleaseLeft(); joyReleaseRight();
+
+  // Send BT command
+  const btCmd = mode ? MODE_CFG[mode].cmd : 'M';
+  sendBT(btCmd);
+
+  // ── Orb ──
+  const orb = document.getElementById('auto-orb');
+  orb.className = 'auto-orb' + (mode ? ' ' + MODE_CFG[mode].orb : '');
+
+  // ── Orb icon: shield for avoid, line arrows for IR ──
+  const icon = document.getElementById('auto-orb-icon');
+  if (mode === 'avoid') {
+    icon.innerHTML = '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+  } else if (mode === 'line') {
+    icon.innerHTML = '<path d="M3 12h18"/><path d="M3 6l4 6-4 6"/><path d="M21 6l-4 6 4 6"/>';
+  } else {
+    icon.innerHTML = '<circle cx="12" cy="12" r="3"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>';
   }
+
+  // ── Title & desc ──
+  const titleEl = document.getElementById('auto-title');
+  const descEl  = document.getElementById('auto-desc');
+  titleEl.className = 'auto-title' + (mode ? ' ' + mode : '');
+  titleEl.textContent = mode ? MODE_CFG[mode].title : 'Smart Drive';
+  descEl.textContent  = mode
+    ? MODE_CFG[mode].desc
+    : 'Choose a mode. The car takes over — obstacle avoid uses ultrasonic sensors, line follow uses IR sensors.';
+
+  // ── Scan bar ──
+  const scan = document.getElementById('auto-scan');
+  scan.className = 'auto-scan-fill' + (mode ? ' ' + MODE_CFG[mode].scan : '');
+  if (mode) {
+    scan.style.transition = 'width 2s linear';
+    const loop = () => {
+      if (activeMode !== mode) { scan.style.width = '0%'; return; }
+      scan.style.width = '100%';
+      scanLoopId = setTimeout(() => { scan.style.width = '0%'; scanLoopId = setTimeout(loop, 200); }, 2000);
+    };
+    loop();
+  } else {
+    scan.style.width = '0%';
+  }
+
+  // ── Buttons ──
+  document.getElementById('avoid-btn').classList.toggle('on', mode === 'avoid');
+  document.getElementById('line-btn').classList.toggle('on', mode === 'line');
+  document.getElementById('auto-stop-btn').classList.toggle('active', !mode);
+
+  // ── Telemetry ──
+  if (mode) setTelem('tv-mode', MODE_CFG[mode].telem[0], MODE_CFG[mode].telem[1]);
+  else      setTelem('tv-mode', 'MANUAL', '');
 }
+
+// Legacy shim — fight mode calls toggleAuto() to disengage
+function toggleAuto() { activateMode(null); }
 
 // ════════════════════════════════════════
 //  UI HELPERS
@@ -1400,7 +1538,7 @@ function registerHit(attackerRole, side) {
   // Hit feed
   const hitEmojis = ['💥','⚡','🔥','💢','🎯','🏹'];
   const emoji = hitEmojis[Math.floor(Math.random() * hitEmojis.length)];
-  const attackLabel = attackerRole === CAR_ROLE ? 'CAR 01' : 'CAR 02';
+  const attackLabel = attackerRole === CAR_ROLE ? 'CAR 02' : 'CAR 01';
   const sideLabel   = side === 'rear' ? ' (rear sneak!)' : side === 'front' ? ' (head-on!)' : '';
   document.getElementById('fight-hitfeed-icon').textContent = side === 'rear' ? '🫢' : emoji;
   document.getElementById('fight-hitfeed-text').textContent = attackLabel + ' scored a hit' + sideLabel;
